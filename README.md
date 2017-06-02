@@ -1,7 +1,7 @@
 # quoridor.py
 A python version of strategy board game "Quoridor", with AI and a graphic interface.
 
-<img src="https://upload.wikimedia.org/wikipedia/commons/8/84/Quoridor_1.jpg" width="600" height="400" title="Matěj Baťha (CC BY-SA 2.5)">
+![](https://raw.githubusercontent.com/alainrinder/quoridor.py/master/img/Picture.600x300.jpg)
 
 ### How to play
 With this script, you can:
@@ -18,7 +18,7 @@ For human players :
  
 
 ### Screenshot
-![Screenshot](https://raw.githubusercontent.com/alainrinder/quoridor.py/master/Screenshot.png)
+![Screenshot](https://raw.githubusercontent.com/alainrinder/quoridor.py/master/img/Screenshot.png)
 
 ### Contributors
 * Alain Rinder ([GitHub](https://github.com/alainrinder))
