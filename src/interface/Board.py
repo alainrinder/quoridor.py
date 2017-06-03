@@ -23,7 +23,7 @@ class Board(IDrawable):
         self.game = game
         self.cols,       self.rows      = cols,       rows
         self.squareSize, self.innerSize = squareSize, innerSize
-        self.grid = [[Square(self, col, row) for row in range(rows)] for col in range(cols)] 
+        self.grid = [[Square(self, GridCoordinates(col, row)) for row in range(rows)] for col in range(cols)] 
         self.width, self.height = squareSize*cols + innerSize*(cols - 1), squareSize*rows + innerSize*(rows - 1)
         if INTERFACE:
             self.window = GraphWin("Quoridor", self.width, self.height)
@@ -46,8 +46,8 @@ class Board(IDrawable):
         for col in range(self.cols):
             for row in range(self.rows):
                 self.grid[col][row].draw()
-        for player in self.game.players:
-            player.pawn.draw()
+        #for player in self.game.players:
+        #    player.pawn.draw()
 
     def startPosition(self, playerIndex) -> GridCoordinates:
         switcher = {
@@ -81,90 +81,102 @@ class Board(IDrawable):
                 endPositions.append(GridCoordinates(endCol, row))
         return endPositions
 
-    def hasPawn(self, col, row):
+    def getSquareAt(self, coord):
+        return self.grid[coord.col][coord.row]
+
+    def hasPawn(self, coord):
         for pawn in self.pawns:
-            if (pawn.col == col and pawn.row == row):
+            if pawn.coord == coord:
                 return True
         return False
 
-    def hasFenceAtLeft(self, col, row):
+    def hasFenceAtLeft(self, coord):
         for fence in self.fences:
-            if ((fence.direction == Fence.DIRECTION.VERTICAL and fence.col == col) and (fence.row == row or fence.row == row - 1)):
+            if fence.direction == Fence.DIRECTION.VERTICAL and (fence.coord == coord or fence.coord == coord.top()):
                 return True
         return False
 
-    def hasFenceAtRight(self, col, row):
+    def hasFenceAtRight(self, coord):
+        return self.hasFenceAtLeft(coord.right())
+
+    def hasFenceAtTop(self, coord):
         for fence in self.fences:
-            if ((fence.direction == Fence.DIRECTION.VERTICAL and fence.col == col + 1) and (fence.row == row or fence.row == row - 1)):
+            if fence.direction == Fence.DIRECTION.HORIZONTAL and (fence.coord == coord or fence.coord == coord.left()):
                 return True
         return False
 
-    def hasFenceAtTop(self, col, row):
-        for fence in self.fences:
-            if ((fence.direction == Fence.DIRECTION.HORIZONTAL and fence.row == row) and (fence.col == col or fence.col == col - 1)):
-                return True
-        return False
+    def hasFenceAtBottom(self, coord):
+        return self.hasFenceAtTop(coord.bottom())
 
-    def hasFenceAtBottom(self, col, row):
-        for fence in self.fences:
-            if ((fence.direction == Fence.DIRECTION.HORIZONTAL and fence.row == row + 1) and (fence.col == col or fence.col == col - 1)):
-                return True
-        return False
+    def isAtLeftEdge(self, coord):
+        return (coord.col == self.firstCol)
+
+    def isAtRightEdge(self, coord):
+        return (coord.col == self.lastCol)
+
+    def isAtTopEdge(self, coord):
+        return (coord.row == self.firstRow)
+
+    def isAtBottomEdge(self, coord):
+        return (coord.row == self.lastRow)
 
     def validPawnMoves(self, pawn):
         validMoves = []
-        col, row = pawn.col, pawn.row
-        if col >= 1 and not self.hasFenceAtLeft(col, row):
-            if not self.hasPawn(col - 1, row):
-                validMoves.append(PawnMove(pawn, col - 1, row))
+        if not self.isAtLeftEdge(pawn.coord) and not self.hasFenceAtLeft(pawn.coord):
+            leftCoord = pawn.coord.left()
+            if not self.hasPawn(leftCoord):
+                validMoves.append(PawnMove(pawn, leftCoord))
             else:
-                if col >= 2 and not self.hasFenceAtLeft(col - 1, row) and not self.hasPawn(col - 2, row):
-                    validMoves.append(PawnMove(pawn, col - 2, row))
+                if not self.isAtLeftEdge(leftCoord) and not self.hasFenceAtLeft(leftCoord) and not self.hasPawn(leftCoord.left()):
+                    validMoves.append(PawnMove(pawn, leftCoord.left()))
                 else:
-                    if row >= 1 and not self.hasFenceAtTop(col - 1, row) and not self.hasPawn(col - 1, row - 1):
-                        validMoves.append(PawnMove(pawn, col - 1, row - 1))
-                    if row <= self.rows - 2 and not self.hasFenceAtBottom(col - 1, row) and not self.hasPawn(col - 1, row + 1):
-                        validMoves.append(PawnMove(pawn, col - 1, row + 1))
-        if col <= self.cols - 2 and not self.hasFenceAtRight(col, row):
-            if not self.hasPawn(col + 1, row):
-                validMoves.append(PawnMove(pawn, col + 1, row))
+                    if not self.isAtTopEdge(leftCoord) and not self.hasFenceAtTop(leftCoord) and not self.hasPawn(leftCoord.top()):
+                        validMoves.append(PawnMove(pawn, leftCoord.top()))
+                    if not self.isAtBottomEdge(leftCoord) and not self.hasFenceAtBottom(leftCoord) and not self.hasPawn(leftCoord.bottom()):
+                        validMoves.append(PawnMove(pawn, leftCoord.bottom()))
+        if not self.isAtRightEdge(pawn.coord) and not self.hasFenceAtRight(pawn.coord):
+            rightCoord = pawn.coord.right()
+            if not self.hasPawn(rightCoord):
+                validMoves.append(PawnMove(pawn, rightCoord))
             else:
-                if col <= self.cols - 3 and not self.hasFenceAtRight(col + 1, row) and not self.hasPawn(col + 2, row):
-                    validMoves.append(PawnMove(pawn, col + 2, row))
+                if not self.isAtRightEdge(rightCoord) and not self.hasFenceAtRight(rightCoord) and not self.hasPawn(rightCoord.right()):
+                    validMoves.append(PawnMove(pawn, rightCoord.right()))
                 else:
-                    if row >= 1 and not self.hasFenceAtTop(col + 1, row) and not self.hasPawn(col + 1, row - 1):
-                        validMoves.append(PawnMove(pawn, col + 1, row - 1))
-                    if row <= self.rows - 2 and not self.hasFenceAtBottom(col + 1, row) and not self.hasPawn(col + 1, row + 1):
-                        validMoves.append(PawnMove(pawn, col + 1, row + 1))
-        if row >= 1 and not self.hasFenceAtTop(col, row):
-            if not self.hasPawn(col, row - 1):
-                validMoves.append(PawnMove(pawn, col, row - 1))
+                    if not self.isAtTopEdge(rightCoord) and not self.hasFenceAtTop(rightCoord) and not self.hasPawn(rightCoord.top()):
+                        validMoves.append(PawnMove(pawn, rightCoord.top()))
+                    if not self.isAtBottomEdge(rightCoord) and not self.hasFenceAtBottom(rightCoord) and not self.hasPawn(rightCoord.bottom()):
+                        validMoves.append(PawnMove(pawn, rightCoord.bottom()))
+        if not self.isAtTopEdge(pawn.coord) and not self.hasFenceAtTop(pawn.coord):
+            topCoord = pawn.coord.top()
+            if not self.hasPawn(topCoord):
+                validMoves.append(PawnMove(pawn, topCoord))
             else:
-                if row >= 2 and not self.hasFenceAtTop(col, row - 1) and not self.hasPawn(col, row - 2):
-                    validMoves.append(PawnMove(pawn, col, row - 2))
+                if not self.isAtTopEdge(topCoord) and not self.hasFenceAtTop(topCoord) and not self.hasPawn(topCoord.top()):
+                    validMoves.append(PawnMove(pawn, topCoord.top()))
                 else:
-                    if col >= 1 and not self.hasFenceAtLeft(col, row - 1) and not self.hasPawn(col - 1, row - 1):
-                        validMoves.append(PawnMove(pawn, col - 1, row - 1))
-                    if col <= self.cols - 2 and not self.hasFenceAtRight(col, row - 1) and not self.hasPawn(col + 1, row - 1):
-                        validMoves.append(PawnMove(pawn, col + 1, row - 1))
-        if row <= self.rows - 2 and not self.hasFenceAtBottom(col, row):
-            if not self.hasPawn(col, row + 1):
-                validMoves.append(PawnMove(pawn, col, row + 1))
+                    if not self.isAtLeftEdge(topCoord) and not self.hasFenceAtLeft(topCoord) and not self.hasPawn(topCoord.left()):
+                        validMoves.append(PawnMove(pawn, topCoord.left()))
+                    if not self.isAtRightEdge(topCoord) and not self.hasFenceAtRight(topCoord) and not self.hasPawn(topCoord.right()):
+                        validMoves.append(PawnMove(pawn, topCoord.right()))
+        if not self.isAtBottomEdge(pawn.coord) and not self.hasFenceAtBottom(pawn.coord):
+            bottomCoord = pawn.coord.bottom()
+            if not self.hasPawn(bottomCoord):
+                validMoves.append(PawnMove(pawn, bottomCoord))
             else:
-                if row <= self.rows - 3 and not self.hasFenceAtBottom(col, row + 1) and not self.hasPawn(col, row + 2):
-                    validMoves.append(PawnMove(pawn, col, row + 2))
+                if not self.isAtBottomEdge(bottomCoord) and not self.hasFenceAtBottom(bottomCoord) and not self.hasPawn(bottomCoord.bottom()):
+                    validMoves.append(PawnMove(pawn, bottomCoord.bottom()))
                 else:
-                    if col >= 1 and not self.hasFenceAtLeft(col, row + 1) and not self.hasPawn(col - 1, row + 1):
-                        validMoves.append(PawnMove(pawn, col - 1, row + 1))
-                    if col <= self.cols - 2 and not self.hasFenceAtRight(col, row + 1) and not self.hasPawn(col + 1, row + 1):
-                        validMoves.append(PawnMove(pawn, col + 1, row + 1))
+                    if not self.isAtLeftEdge(bottomCoord) and not self.hasFenceAtLeft(bottomCoord) and not self.hasPawn(bottomCoord.left()):
+                        validMoves.append(PawnMove(pawn, bottomCoord.left()))
+                    if not self.isAtRightEdge(bottomCoord) and not self.hasFenceAtRight(bottomCoord) and not self.hasPawn(bottomCoord.right()):
+                        validMoves.append(PawnMove(pawn, bottomCoord.right()))
         return validMoves
 
-    def isValidPawnMove(self, pawn, col, row, validMoves = None):
+    def isValidPawnMove(self, pawn, coord, validMoves = None):
         if validMoves is None:
             validMoves = self.validPawnMoves(pawn)
         for validMove in validMoves:
-            if (validMove.col == col and validMove.row == row):
+            if validMove.coord == coord:
                 return True
         return False
 
@@ -173,7 +185,7 @@ class Board(IDrawable):
             validMoves = self.validPawnMoves(player.pawn)
         for validMove in validMoves:
             possiblePawn = Pawn(self, player)
-            possiblePawn.col, possiblePawn.row = validMove.col, validMove.row
+            possiblePawn.coord = validMove.coord.clone()
             possiblePawn.draw(Color.Mix(player.color.value, Color.SQUARE.value))
             del possiblePawn
 
@@ -182,7 +194,7 @@ class Board(IDrawable):
             validMoves = self.validPawnMoves(player.pawn)
         for validMove in validMoves:
             possiblePawn = Pawn(self, player)
-            possiblePawn.col, possiblePawn.row = validMove.col, validMove.row
+            possiblePawn.coord = validMove.coord.clone()
             possiblePawn.draw(Color.SQUARE.value, Color.SQUARE.value)
             del possiblePawn
 
@@ -190,22 +202,24 @@ class Board(IDrawable):
         validPlacings = []
         for col in range(self.cols):
             for row in range(self.rows):
-                if (self.isValidFencePlacing(col, row, Fence.DIRECTION.HORIZONTAL)):
-                    validPlacings.append(FencePlacing(col, row, Fence.DIRECTION.HORIZONTAL))
-                if (self.isValidFencePlacing(col, row, Fence.DIRECTION.VERTICAL)):
-                    validPlacings.append(FencePlacing(col, row, Fence.DIRECTION.VERTICAL))
+                if (self.isValidFencePlacing(GridCoordinates(col, row), Fence.DIRECTION.HORIZONTAL)):
+                    validPlacings.append(FencePlacing(GridCoordinates(col, row), Fence.DIRECTION.HORIZONTAL))
+                if (self.isValidFencePlacing(GridCoordinates(col, row), Fence.DIRECTION.VERTICAL)):
+                    validPlacings.append(FencePlacing(GridCoordinates(col, row), Fence.DIRECTION.VERTICAL))
         return validPlacings
 
     # TODO: check if it is blocking a player pawn
-    def isValidFencePlacing(self, col, row, direction):
-        if row in range(1, self.rows) and col in range(self.cols - 1) and direction == Fence.DIRECTION.HORIZONTAL and not self.hasFenceAtTop(col, row)  and not self.hasFenceAtTop(col + 1, row):
+    def isValidFencePlacing(self, coord, direction):
+        if not self.isAtTopEdge(coord) and not self.isAtRightEdge(coord) and direction == Fence.DIRECTION.HORIZONTAL and not self.hasFenceAtTop(coord) and not self.hasFenceAtTop(coord.right()):
+            crossingFenceCoord = coord.top().right()
             for fence in self.fences:
-                if (fence.col == col + 1 and fence.row == row - 1 and fence.direction == Fence.DIRECTION.VERTICAL):
+                if fence.coord == crossingFenceCoord and fence.direction == Fence.DIRECTION.VERTICAL:
                     return False
             return True
-        if col in range(1, self.cols) and row in range(self.rows - 1) and direction == Fence.DIRECTION.VERTICAL   and not self.hasFenceAtLeft(col, row) and not self.hasFenceAtLeft(col, row + 1):
+        if not self.isAtLeftEdge(coord) and not self.isAtBottomEdge(coord) and direction == Fence.DIRECTION.VERTICAL and not self.hasFenceAtLeft(coord) and not self.hasFenceAtLeft(coord.bottom()):
+            crossingFenceCoord = coord.bottom().left()
             for fence in self.fences:
-                if (fence.col == col - 1 and fence.row == row + 1 and fence.direction == Fence.DIRECTION.HORIZONTAL):
+                if fence.coord == crossingFenceCoord and fence.direction == Fence.DIRECTION.HORIZONTAL:
                     return False
             return True
         return False
@@ -215,7 +229,7 @@ class Board(IDrawable):
             validPlacings = self.validFencePlacings()
         for validPlacing in validPlacings:
             possibleFence = Fence(self, player)
-            possibleFence.col, possibleFence.row, possibleFence.direction = validPlacing.col, validPlacing.row, validPlacing.direction
+            possibleFence.coord, possibleFence.direction = validPlacing.coord, validPlacing.direction
             possibleFence.draw(Color.Lighter(player.color.value))
             del possibleFence
 
@@ -224,7 +238,7 @@ class Board(IDrawable):
             validPlacings = self.validFencePlacings()
         for validPlacing in validPlacings:
             possibleFence = Fence(self, player)
-            possibleFence.col, possibleFence.row, possibleFence.direction = validPlacing.col, validPlacing.row, validPlacing.direction
+            possibleFence.coord, possibleFence.direction = validPlacing.coord, validPlacing.direction
             possibleFence.draw(Color.WHITE.value)
             del possibleFence
 
@@ -237,9 +251,9 @@ class Board(IDrawable):
 
     def getPawnMoveFromMousePosition(self, pawn, x, y) -> PawnMove:
         square = self.getSquareFromMousePosition(x, y)
-        if square is None or not self.isValidPawnMove(pawn, square.col, square.row):
+        if square is None or not self.isValidPawnMove(pawn, square.coord):
             return None
-        return PawnMove(pawn, square.col, square.row)
+        return PawnMove(pawn, square.coord)
 
     def getFencePlacingFromMousePosition(self, x, y) -> FencePlacing:
         fullSize = self.squareSize + self.innerSize
@@ -249,14 +263,16 @@ class Board(IDrawable):
         # vertical fence
         if x % fullSize > self.squareSize and y % fullSize < self.squareSize:
             square = self.getSquareFromMousePosition(x + self.squareSize, y)
-            return FencePlacing(square.col, square.row, Fence.DIRECTION.VERTICAL) if self.isValidFencePlacing(square.col, square.row, Fence.DIRECTION.VERTICAL) else None
+            return FencePlacing(square.coord, Fence.DIRECTION.VERTICAL) if self.isValidFencePlacing(square.coord, Fence.DIRECTION.VERTICAL) else None
         # horizontal fence
         if x % fullSize < self.squareSize and y % fullSize > self.squareSize:
             square = self.getSquareFromMousePosition(x, y + self.squareSize)
-            return FencePlacing(square.col, square.row, Fence.DIRECTION.HORIZONTAL) if self.isValidFencePlacing(square.col, square.row, Fence.DIRECTION.HORIZONTAL) else None
+            return FencePlacing(square.coord, Fence.DIRECTION.HORIZONTAL) if self.isValidFencePlacing(square.coord, Fence.DIRECTION.HORIZONTAL) else None
         # on inner crossing space
         if x % fullSize > self.squareSize and y % fullSize > self.squareSize:
             square = self.getSquareFromMousePosition(x + self.squareSize, y + self.squareSize)
             direction = Fence.DIRECTION.HORIZONTAL if square.left - x < square.top - y else Fence.DIRECTION.VERTICAL
-            return FencePlacing(square.col, square.row, direction) if self.isValidFencePlacing(square.col, square.row, direction) else None
+            return FencePlacing(square.coord, direction) if self.isValidFencePlacing(square.coord, direction) else None
         return None
+
+

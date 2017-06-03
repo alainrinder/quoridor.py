@@ -21,7 +21,7 @@ class Pawn(IDrawable):
     def draw(self, fillColor = None, textColor = Color.WHITE.value):
         if not INTERFACE:
             return 
-        center = self.board.grid[self.col][self.row].middle
+        center = self.getSquare().middle
         radius = int(self.board.squareSize*0.4)
         circle = Circle(center, radius)
         circle.setFill(self.player.color.value if fillColor is None else fillColor)
@@ -33,12 +33,16 @@ class Pawn(IDrawable):
         label.setTextColor(textColor)
         label.draw(self.board.window)
 
-    def place(self, col, row):
-        self.col = col
-        self.row = row
+    def place(self, coord):
+        self.coord = coord
         self.board.pawns.append(self)
         self.draw()
 
-    def move(self, col, row):
-        self.board.grid[self.col][self.row].draw()
-        self.place(col, row)
+    def move(self, coord):
+        self.getSquare().draw()
+        self.place(coord)
+
+    def getSquare(self):
+        return self.board.getSquareAt(self.coord)
+
+

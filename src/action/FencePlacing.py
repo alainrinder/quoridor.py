@@ -11,9 +11,8 @@ from src.action.IAction import *
 
 
 class FencePlacing(IAction):
-    def __init__(self, col, row, direction):
-        self.col       = col
-        self.row       = row
+    def __init__(self, coord, direction):
+        self.coord     = coord
         self.direction = direction
 
 

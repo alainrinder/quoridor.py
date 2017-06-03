@@ -25,7 +25,7 @@ class Fence(IDrawable):
     def draw(self, color = None):
         if not INTERFACE:
             return 
-        square = self.board.grid[self.col][self.row]
+        square = self.getSquare()
         rectangleLength = 2*self.board.squareSize + self.board.innerSize
         rectangleWidth  = self.board.innerSize
         if (self.direction == Fence.DIRECTION.HORIZONTAL):
@@ -36,13 +36,17 @@ class Fence(IDrawable):
         rectangle.setWidth(0)
         rectangle.draw(self.board.window)
 
-    def place(self, col, row, direction):
-        self.col = col
-        self.row = row
+    def place(self, coord, direction):
+        self.coord = coord
         self.direction = direction
         self.board.fences.append(self)
         self.draw()
 
+    def getSquare(self):
+        return self.board.getSquareAt(self.coord)
+
     def __str__(self):
         vertical = (self.direction == Fence.DIRECTION.VERTICAL)
-        return "%s-fence at %d,%d" % ("V" if vertical else "H", self.col, self.row)
+        return "%s-fence at %s" % ("V" if vertical else "H", self.coord)
+
+

@@ -11,7 +11,7 @@ from src.action.IAction import *
 
 
 class IPlayer:
-    def __init__(self, name, color):
+    def __init__(self, name = None, color = None):
         self.name   = name
         self.color  = color
         self.pawn   = None
@@ -21,12 +21,12 @@ class IPlayer:
     def play(self, board) -> IAction:
         pass
 
-    def movePawn(self, col, row):
-        self.pawn.move(col, row)
+    def movePawn(self, coord):
+        self.pawn.move(coord)
 
-    def placeFence(self, col, row, direction):
+    def placeFence(self, coord, direction):
         fence = self.fences.pop()
-        fence.place(col, row, direction)
+        fence.place(coord, direction)
 
     def remainingFences(self):
         return len(self.fences)

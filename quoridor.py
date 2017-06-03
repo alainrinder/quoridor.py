@@ -8,7 +8,7 @@
 # @note      Python version: 3.6.1 [recommended] - 3.5.0 [minimal: https://docs.python.org/3/library/typing.html]
 #
 # TODO: 
-#    use GridCoordinates class instead of col/row
+# OK use GridCoordinates class instead of col/row
 # OK param graphical interface (disable draw functions...)
 # OK split source files
 #    handle exec params
@@ -16,12 +16,7 @@
 #    create A* algorithm for path finding
 #
 
-
-
-import time
-import random
-
-from src.interface.Color  import *
+#from src.interface.Color  import *
 from src.Game             import *
 from src.player.Human     import *
 from src.player.RandomBot import *
@@ -30,10 +25,10 @@ from src.player.RandomBot import *
 
 def main():
     game = Game([ # 2 or 4
-        RandomBot("Alain",   Color.RED   ),
-        RandomBot("Benoit",  Color.BLUE  ),
-        RandomBot("Clément", Color.GREEN ),
-        RandomBot("Daniel",  Color.ORANGE)
+        RandomBot("Alain"),
+        RandomBot("Benoit"),
+        RandomBot("Clément"),
+        RandomBot("Daniel")
     ])
     game.start(5) # rounds
     game.end()

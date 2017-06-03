@@ -11,9 +11,8 @@ from src.action.IAction import *
 
 
 class PawnMove(IAction):
-    def __init__(self, pawn, col, row):
-        self.pawn = pawn
-        self.col  = col
-        self.row  = row
+    def __init__(self, pawn, coord):
+        self.pawn  = pawn
+        self.coord = coord
 
 
