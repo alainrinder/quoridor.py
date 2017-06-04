@@ -120,69 +120,69 @@ class Board(IDrawable):
     def isAtBottomEdge(self, coord):
         return (coord.row == self.lastRow)
 
-    def validPawnMoves(self, pawn):
+    def validPawnMoves(self, coord):
         validMoves = []
-        if not self.isAtLeftEdge(pawn.coord) and not self.hasFenceAtLeft(pawn.coord):
-            leftCoord = pawn.coord.left()
+        if not self.isAtLeftEdge(coord) and not self.hasFenceAtLeft(coord):
+            leftCoord = coord.left()
             if not self.hasPawn(leftCoord):
-                validMoves.append(PawnMove(pawn, leftCoord))
+                validMoves.append(PawnMove(coord, leftCoord))
             else:
                 if not self.isAtLeftEdge(leftCoord) and not self.hasFenceAtLeft(leftCoord) and not self.hasPawn(leftCoord.left()):
-                    validMoves.append(PawnMove(pawn, leftCoord.left()))
+                    validMoves.append(PawnMove(coord, leftCoord.left(), leftCoord))
                 else:
                     if not self.isAtTopEdge(leftCoord) and not self.hasFenceAtTop(leftCoord) and not self.hasPawn(leftCoord.top()):
-                        validMoves.append(PawnMove(pawn, leftCoord.top()))
+                        validMoves.append(PawnMove(coord, leftCoord.top(), leftCoord))
                     if not self.isAtBottomEdge(leftCoord) and not self.hasFenceAtBottom(leftCoord) and not self.hasPawn(leftCoord.bottom()):
-                        validMoves.append(PawnMove(pawn, leftCoord.bottom()))
-        if not self.isAtRightEdge(pawn.coord) and not self.hasFenceAtRight(pawn.coord):
-            rightCoord = pawn.coord.right()
+                        validMoves.append(PawnMove(coord, leftCoord.bottom(), leftCoord))
+        if not self.isAtRightEdge(coord) and not self.hasFenceAtRight(coord):
+            rightCoord = coord.right()
             if not self.hasPawn(rightCoord):
-                validMoves.append(PawnMove(pawn, rightCoord))
+                validMoves.append(PawnMove(coord, rightCoord))
             else:
                 if not self.isAtRightEdge(rightCoord) and not self.hasFenceAtRight(rightCoord) and not self.hasPawn(rightCoord.right()):
-                    validMoves.append(PawnMove(pawn, rightCoord.right()))
+                    validMoves.append(PawnMove(coord, rightCoord.right(), rightCoord))
                 else:
                     if not self.isAtTopEdge(rightCoord) and not self.hasFenceAtTop(rightCoord) and not self.hasPawn(rightCoord.top()):
-                        validMoves.append(PawnMove(pawn, rightCoord.top()))
+                        validMoves.append(PawnMove(coord, rightCoord.top(), rightCoord))
                     if not self.isAtBottomEdge(rightCoord) and not self.hasFenceAtBottom(rightCoord) and not self.hasPawn(rightCoord.bottom()):
-                        validMoves.append(PawnMove(pawn, rightCoord.bottom()))
-        if not self.isAtTopEdge(pawn.coord) and not self.hasFenceAtTop(pawn.coord):
-            topCoord = pawn.coord.top()
+                        validMoves.append(PawnMove(coord, rightCoord.bottom(), rightCoord))
+        if not self.isAtTopEdge(coord) and not self.hasFenceAtTop(coord):
+            topCoord = coord.top()
             if not self.hasPawn(topCoord):
-                validMoves.append(PawnMove(pawn, topCoord))
+                validMoves.append(PawnMove(coord, topCoord))
             else:
                 if not self.isAtTopEdge(topCoord) and not self.hasFenceAtTop(topCoord) and not self.hasPawn(topCoord.top()):
-                    validMoves.append(PawnMove(pawn, topCoord.top()))
+                    validMoves.append(PawnMove(coord, topCoord.top(), topCoord))
                 else:
                     if not self.isAtLeftEdge(topCoord) and not self.hasFenceAtLeft(topCoord) and not self.hasPawn(topCoord.left()):
-                        validMoves.append(PawnMove(pawn, topCoord.left()))
+                        validMoves.append(PawnMove(coord, topCoord.left(), topCoord))
                     if not self.isAtRightEdge(topCoord) and not self.hasFenceAtRight(topCoord) and not self.hasPawn(topCoord.right()):
-                        validMoves.append(PawnMove(pawn, topCoord.right()))
-        if not self.isAtBottomEdge(pawn.coord) and not self.hasFenceAtBottom(pawn.coord):
-            bottomCoord = pawn.coord.bottom()
+                        validMoves.append(PawnMove(coord, topCoord.right(), topCoord))
+        if not self.isAtBottomEdge(coord) and not self.hasFenceAtBottom(coord):
+            bottomCoord = coord.bottom()
             if not self.hasPawn(bottomCoord):
-                validMoves.append(PawnMove(pawn, bottomCoord))
+                validMoves.append(PawnMove(coord, bottomCoord))
             else:
                 if not self.isAtBottomEdge(bottomCoord) and not self.hasFenceAtBottom(bottomCoord) and not self.hasPawn(bottomCoord.bottom()):
-                    validMoves.append(PawnMove(pawn, bottomCoord.bottom()))
+                    validMoves.append(PawnMove(coord, bottomCoord.bottom(), bottomCoord))
                 else:
                     if not self.isAtLeftEdge(bottomCoord) and not self.hasFenceAtLeft(bottomCoord) and not self.hasPawn(bottomCoord.left()):
-                        validMoves.append(PawnMove(pawn, bottomCoord.left()))
+                        validMoves.append(PawnMove(coord, bottomCoord.left(), bottomCoord))
                     if not self.isAtRightEdge(bottomCoord) and not self.hasFenceAtRight(bottomCoord) and not self.hasPawn(bottomCoord.right()):
-                        validMoves.append(PawnMove(pawn, bottomCoord.right()))
+                        validMoves.append(PawnMove(coord, bottomCoord.right(), bottomCoord))
         return validMoves
 
-    def isValidPawnMove(self, pawn, coord, validMoves = None):
+    def isValidPawnMove(self, fromCoord, toCoord, validMoves = None):
         if validMoves is None:
-            validMoves = self.validPawnMoves(pawn)
+            validMoves = self.validPawnMoves(fromCoord)
         for validMove in validMoves:
-            if validMove.coord == coord:
+            if validMove.toCoord == toCoord:
                 return True
         return False
 
     def displayValidPawnMoves(self, player, validMoves = None):
         if validMoves is None:
-            validMoves = self.validPawnMoves(player.pawn)
+            validMoves = self.validPawnMoves(player.pawn.coord)
         for validMove in validMoves:
             possiblePawn = Pawn(self, player)
             possiblePawn.coord = validMove.coord.clone()
@@ -191,7 +191,7 @@ class Board(IDrawable):
 
     def hideValidPawnMoves(self, player, validMoves = None):
         if validMoves is None: 
-            validMoves = self.validPawnMoves(player.pawn)
+            validMoves = self.validPawnMoves(player.pawn.coord)
         for validMove in validMoves:
             possiblePawn = Pawn(self, player)
             possiblePawn.coord = validMove.coord.clone()

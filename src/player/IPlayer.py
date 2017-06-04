@@ -17,6 +17,8 @@ class IPlayer:
         self.pawn   = None
         self.fences = []
         self.score  = 0
+        self.startPosition = None
+        self.endPositions = []
 
     def play(self, board) -> IAction:
         pass
@@ -30,6 +32,12 @@ class IPlayer:
 
     def remainingFences(self):
         return len(self.fences)
+
+    def hasWon(self):
+        for endPosition in self.endPositions:
+            if self.pawn.coord == endPosition:
+                return True
+        return False
 
     def __str__(self):
         return "%s (%s)" % (self.name, self.color.name)

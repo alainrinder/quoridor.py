@@ -20,5 +20,5 @@ class RandomBot(IBot):
         if random.randint(0, 2) == 0 and self.remainingFences() > 0 and len(validFencePlacings) > 0:
             return random.choice(validFencePlacings)
         else:
-            validPawnMoves = board.validPawnMoves(self.pawn)
+            validPawnMoves = board.validPawnMoves(self.pawn.coord)
             return random.choice(validPawnMoves)

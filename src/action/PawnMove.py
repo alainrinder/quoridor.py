@@ -11,8 +11,9 @@ from src.action.IAction import *
 
 
 class PawnMove(IAction):
-    def __init__(self, pawn, coord):
-        self.pawn  = pawn
-        self.coord = coord
+    def __init__(self, fromCoord, toCoord, throughCoord = None):
+        self.fromCoord    = fromCoord
+        self.toCoord      = toCoord
+        self.throughCoord = throughCoord
 
 

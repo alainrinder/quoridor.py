@@ -15,6 +15,7 @@ from src.interface.Pawn      import *
 from src.player.Human        import *
 from src.action.PawnMove     import *
 from src.action.FencePlacing import *
+from src.Path                import *
 
 
 
@@ -73,21 +74,21 @@ class Game:
                     player.fences.append(Fence(self.board, player))
             
             currentPlayerIndex = random.randrange(playerCount) # COIN TOSS
-            quitted, won = False, False
-            while not quitted and not won:
+            finished = False
+            while not finished:
                 player = self.players[currentPlayerIndex]
                 action = player.play(self.board)
+                #print(Path.BreadthFirstSearch(self.board, player.pawn.coord, player.endPositions))
                 if isinstance(action, PawnMove):
-                    player.movePawn(action.coord)
-                    for endPosition in player.endPositions:
-                        if player.pawn.coord == endPosition:
-                            won = True
-                            print("Player %s won" % player.name)
-                            player.score += 1
+                    player.movePawn(action.toCoord)
+                    if player.hasWon():
+                        finished = True
+                        print("Player %s won" % player.name)
+                        player.score += 1
                 elif isinstance(action, FencePlacing):
                     player.placeFence(action.coord, action.direction)
                 elif isinstance(action, Quit):
-                    quitted = True
+                    finished = True
                     print("Player %s quitted" % player.name)
                 currentPlayerIndex = (currentPlayerIndex + 1) % playerCount
                 if INTERFACE:

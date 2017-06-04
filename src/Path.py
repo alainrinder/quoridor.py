@@ -6,6 +6,8 @@
 # @version   0.1
 #
 
+from src.action.PawnMove import *
+
 
 
 class Path:
@@ -20,6 +22,9 @@ class Path:
 
     def end(self):
         return self.coords[-1]
+
+    def __str__(self):
+        return " -> ".join(map(str, self.coords))
 
     # l1 norm
     def ManhattanDistance(coord1, coord2):
@@ -43,15 +48,26 @@ class Path:
                     add n to S
                     n.parent = current
                     Q.enqueue(n)"""
-        #alreadyVisited = [(startCoord, None)]
-        #forthcomingVisited = [(startCoord, None)]
-        #while forthcomingVisited:
-        #    node = forthcomingVisited.pop(0) 
-        #    for endCoord in endCoords:
-        #        if node.coord == endCoord:
-        #            return 
-        #    for neighbor in node.coord.neighbors(board): # validpawnmoves
+        root = PawnMove(None, startCoord)
 
+        previousMoves = {(startCoord.col, startCoord.row): root}
+        nextMoves = [root]
+        while nextMoves:
+            move = nextMoves.pop(0) 
+            for endCoord in endCoords:
+                if move.toCoord == endCoord:
+                    # Found shortest path
+                    coords = [move.toCoord]
+                    while move.fromCoord is not None:
+                        move = previousMoves[(move.fromCoord.col, move.fromCoord.row)]
+                        coords.append(move.toCoord)
+                    coords.reverse()
+                    return Path(coords)
+            # Add neighbors
+            for validMove in board.validPawnMoves(move.toCoord): 
+                if (validMove.toCoord.col, validMove.toCoord.row) not in previousMoves:
+                    previousMoves[(validMove.toCoord.col, validMove.toCoord.row)] = validMove
+                    nextMoves.append(validMove)
 
     def DepthFirstSearch():
         pass

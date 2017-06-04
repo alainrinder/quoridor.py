@@ -19,7 +19,7 @@ class Human(IPlayer):
         while True:
             key = board.window.getKey()
             if key == "p": # pawn
-                validPawnMoves = board.validPawnMoves(self.pawn)
+                validPawnMoves = board.validPawnMoves(self.pawn.coord)
                 board.displayValidPawnMoves(self, validPawnMoves)
                 click = board.window.getMouse()
                 pawnMove = board.getPawnMoveFromMousePosition(self.pawn, click.x, click.y)

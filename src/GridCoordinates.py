@@ -13,20 +13,6 @@ class GridCoordinates:
         self.col  = col
         self.row  = row
 
-    # https://stackoverflow.com/questions/390250/elegant-ways-to-support-equivalence-equality-in-python-classes
-    def __eq__(self, other):
-        """Override the default Equals behavior"""
-        if isinstance(other, self.__class__):
-            return self.col == other.col and self.row == other.row
-        return NotImplemented
-
-    # https://stackoverflow.com/questions/390250/elegant-ways-to-support-equivalence-equality-in-python-classes
-    def __ne__(self, other):
-        """Define a non-equality test"""
-        if isinstance(other, self.__class__):
-            return not self.__eq__(other)
-        return NotImplemented
-
     def left(self):
     	return GridCoordinates(self.col - 1, self.row)
 
@@ -41,6 +27,20 @@ class GridCoordinates:
 
     def clone(self):
     	return GridCoordinates(self.col, self.row)
+
+    # https://stackoverflow.com/questions/390250/elegant-ways-to-support-equivalence-equality-in-python-classes
+    def __eq__(self, other):
+        """Override the default Equals behavior"""
+        if isinstance(other, self.__class__):
+            return self.col == other.col and self.row == other.row
+        return NotImplemented
+
+    # https://stackoverflow.com/questions/390250/elegant-ways-to-support-equivalence-equality-in-python-classes
+    def __ne__(self, other):
+        """Define a non-equality test"""
+        if isinstance(other, self.__class__):
+            return not self.__eq__(other)
+        return NotImplemented
 
     def __str__(self):
     	return "%d,%d" % (self.col, self.row)
