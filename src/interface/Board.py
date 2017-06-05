@@ -275,4 +275,19 @@ class Board(IDrawable):
             return FencePlacing(square.coord, direction) if self.isValidFencePlacing(square.coord, direction) else None
         return None
 
+    # Move to Path.draw (idem for displayPawnMove and displayFencePlacing)
+    def displayPath(self, path, color = None):
+        for coord in path.coords[1:]:
+            center = self.getSquareAt(coord).middle
+            radius = int(self.squareSize*0.2)
+            circle = Circle(center, radius)
+            circle.setFill(Color.PURPLE.value if color is None else color)
+            circle.setWidth(0)
+            circle.draw(self.window)
+
+    def hidePath(self, path):
+        for coord in path.coords[1:]:
+            self.getSquareAt(coord).draw()
+
+
 

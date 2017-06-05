@@ -13,7 +13,7 @@
 # OK split source files
 #    handle exec params
 #    check if fence placing will not block a player
-#    create A* algorithm for path finding
+#    create algorithms for path finding
 #
 
 #from src.interface.Color  import *

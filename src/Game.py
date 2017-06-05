@@ -78,7 +78,11 @@ class Game:
             while not finished:
                 player = self.players[currentPlayerIndex]
                 action = player.play(self.board)
-                #print(Path.BreadthFirstSearch(self.board, player.pawn.coord, player.endPositions))
+                path = Path.BreadthFirstSearch(self.board, player.pawn.coord, player.endPositions)
+                #self.board.displayPath(path, player.color.value)
+                #time.sleep(0.5)
+                #self.board.hidePath(path)
+                #print(path)
                 if isinstance(action, PawnMove):
                     player.movePawn(action.toCoord)
                     if player.hasWon():
