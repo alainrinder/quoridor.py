@@ -6,29 +6,42 @@
 # @version   0.1
 #
 
+import math
+
 from src.action.PawnMove import *
 
 
 
 class Path:
-    def __init__(self, coords):
-        self.coords = coords
+    def __init__(self, moves):
+        self.moves = moves
 
     def length(self):
-        return len(self.coords)
+        return len(self.moves)
 
-    def start(self):
-        return self.coords[0]
+    def startCoord(self):
+        return self.moves[0].fromCoord
 
-    def end(self):
-        return self.coords[-1]
+    def endCoord(self):
+        return self.moves[-1].toCoord
+
+    def firstMove(self):
+        return self.moves[0]
 
     def __str__(self):
-        return " -> ".join(map(str, self.coords))
+        return "[%s] -> %s" % (str(self.startCoord()), " -> ".join(map(lambda move:str(move.toCoord), self.moves)))
 
     # l1 norm
-    def ManhattanDistance(coord1, coord2):
-        return abs(coord2.col - coord1.col) + abs(coord2.row - coord1.row);
+    def ManhattanDistance(fromCoord, toCoord):
+        return abs(toCoord.col - fromCoord.col) + abs(toCoord.row - fromCoord.row)
+
+    def ManhattanDistanceMulti(fromCoord, toCoords):
+        minManhattanDistance = math.inf # 3.5
+        for toCoord in toCoords:
+            manhattanDistance = Path.ManhattanDistance(fromCoord, toCoord)
+            if manhattanDistance < minManhattanDistance:
+                minManhattanDistance = manhattanDistance
+        return minManhattanDistance
 
     def BreadthFirstSearch(board, startCoord, endCoords):
         """Breadth-First-Search(Graph, root):
@@ -50,30 +63,58 @@ class Path:
                     Q.enqueue(n)"""
         root = PawnMove(None, startCoord)
 
-        previousMoves = {(startCoord.col, startCoord.row): root}
+        previousMoves = {startCoord: root}
         nextMoves = [root]
         while nextMoves:
             move = nextMoves.pop(0) 
             for endCoord in endCoords:
                 if move.toCoord == endCoord:
                     # Found shortest path
-                    coords = [move.toCoord]
+                    pathMoves = [move]
                     while move.fromCoord is not None:
-                        move = previousMoves[(move.fromCoord.col, move.fromCoord.row)]
-                        coords.append(move.toCoord)
-                    coords.reverse()
-                    return Path(coords)
+                        move = previousMoves[move.fromCoord]
+                        pathMoves.append(move)
+                    pathMoves.reverse()
+                    return Path(pathMoves[1:])
             # Add neighbors
-            for validMove in board.validPawnMoves(move.toCoord): 
-                if (validMove.toCoord.col, validMove.toCoord.row) not in previousMoves:
-                    previousMoves[(validMove.toCoord.col, validMove.toCoord.row)] = validMove
+            validMoves = board.validPawnMoves(move.toCoord)
+            sorted(validMoves, key=lambda validMove: Path.ManhattanDistanceMulti(validMove.toCoord, endCoords))
+            for validMove in validMoves: 
+                if validMove.toCoord not in previousMoves:
+                    previousMoves[validMove.toCoord] = validMove
                     nextMoves.append(validMove)
+        return None
 
     def DepthFirstSearch():
         pass
 
-    def Djikstra():
-        pass
+    def Dijkstra(board, startCoord, endCoords, moveScore = lambda move, step: 1): # moveScore = function or lamdba (move) promotePathStartingWithJump, discriminatePathStartigByOfferingJump
+        root = PawnMove(None, startCoord)
+
+        previousMoves = {startCoord: (0, root)} # coord: (score, move)
+        nextMoves = [(0, 0, root)] # (step, score, move)
+        while nextMoves:
+            sorted(nextMoves, key=lambda nextMove: nextMove[1]) # Order by score
+            (step, score, move) = nextMoves.pop(0) # Get first (minimal score)
+            for endCoord in endCoords:
+                if move.toCoord == endCoord: # Found shortest path
+                    pathMoves = [move]
+                    while move.fromCoord is not None:
+                        move = previousMoves[move.fromCoord][1]
+                        pathMoves.append(move)
+                    pathMoves.reverse()
+                    return Path(pathMoves[1:])
+            # Add neighbors
+            validMoves = board.validPawnMoves(move.toCoord)
+            sorted(validMoves, key=lambda validMove: Path.ManhattanDistanceMulti(validMove.toCoord, endCoords))
+            for validMove in validMoves: 
+                validMoveScore = score + moveScore(validMove, step + 1)
+                if validMove.toCoord not in previousMoves:
+                    previousMoves[validMove.toCoord] = (validMoveScore, validMove)
+                    nextMoves.append((step + 1, validMoveScore, validMove))
+                if validMoveScore < previousMoves[validMove.toCoord][0]:
+                    previousMoves[validMove.toCoord] = (validMoveScore, validMove)
+        return None
 
     def AStar():
         pass

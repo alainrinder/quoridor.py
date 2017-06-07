@@ -22,3 +22,4 @@ class RandomBot(IBot):
         else:
             validPawnMoves = board.validPawnMoves(self.pawn.coord)
             return random.choice(validPawnMoves)
+

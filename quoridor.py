@@ -14,23 +14,26 @@
 #    handle exec params
 #    check if fence placing will not block a player
 #    create algorithms for path finding
+#    move pawn.coord to player (pawn uses player's coord)
+#    BuilderBot
 #
 
 #from src.interface.Color  import *
 from src.Game             import *
 from src.player.Human     import *
 from src.player.RandomBot import *
+from src.player.RunnerBot import *
 
 
 
 def main():
     game = Game([ # 2 or 4
-        RandomBot("Alain"),
-        RandomBot("Benoit"),
-        RandomBot("Clément"),
-        RandomBot("Daniel")
+        RunnerBot("Alain"),
+        RunnerBot("Benoit"),
+        RunnerBot("Clément"),
+        RunnerBot("Daniel")
     ])
-    game.start(5) # rounds
+    game.start(20) # rounds
     game.end()
 
 
