@@ -49,7 +49,6 @@ class GridCoordinates:
         #return hash(tuple(sorted(self.__dict__.items())))
         return hash((self.col, self.row))
 
-
     def __str__(self):
     	return "%d,%d" % (self.col, self.row)
 

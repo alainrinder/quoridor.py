@@ -12,30 +12,36 @@
 # OK param graphical interface (disable draw functions...)
 # OK split source files
 #    handle exec params
-#    check if fence placing will not block a player
-#    create algorithms for path finding
-#    move pawn.coord to player (pawn uses player's coord)
+# OK check if fence placing will not block a player
+# OK create algorithms for path finding
 #    BuilderBot
+#    PERFORMANCE ISSUES: store valid fence placings, valid pawn moves (as a graph?) with updates
 #
 
-#from src.interface.Color  import *
-from src.Game             import *
-from src.player.Human     import *
-from src.player.RandomBot import *
-from src.player.RunnerBot import *
+#from src.interface.Color   import *
+from src.Settings          import *
+from src.Game              import *
+from src.player.Human      import *
+from src.player.RandomBot  import *
+from src.player.RunnerBot  import *
+from src.player.BuilderBot import *
 
 
 
 def main():
     game = Game([ # 2 or 4
-        RunnerBot("Alain"),
-        RunnerBot("Benoit"),
-        RunnerBot("Clément"),
-        RunnerBot("Daniel")
-    ])
-    game.start(20) # rounds
+        RunnerBot ("Alain"),
+        BuilderBot("Benoit"),
+        BuilderBot("Clément"),
+        BuilderBot("Daniel")
+    ], 9, 9, 40)
+    game.start(1) # rounds
     game.end()
 
+    global TRACE
+    print("TRACE")
+    for i in TRACE:
+    	print("%s: %s" % (i, TRACE[i]))
 
 main()
 

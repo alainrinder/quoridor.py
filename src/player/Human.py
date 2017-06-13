@@ -19,7 +19,7 @@ class Human(IPlayer):
         while True:
             key = board.window.getKey()
             if key == "p": # pawn
-                validPawnMoves = board.validPawnMoves(self.pawn.coord)
+                validPawnMoves = board.storedValidPawnMoves[self.pawn.coord]#board.validPawnMoves(self.pawn.coord)
                 board.displayValidPawnMoves(self, validPawnMoves)
                 click = board.window.getMouse()
                 pawnMove = board.getPawnMoveFromMousePosition(self.pawn, click.x, click.y)
@@ -28,7 +28,7 @@ class Human(IPlayer):
                 if clickOnValidTarget:
                     return pawnMove
             if key == "f" and self.remainingFences() > 0: # fence
-                validFencePlacings = board.validFencePlacings()
+                validFencePlacings = board.storedValidFencePlacings#board.validFencePlacings()
                 board.displayValidFencePlacings(self, validFencePlacings)
                 click = board.window.getMouse()
                 fencePlacing = board.getFencePlacingFromMousePosition(click.x, click.y)

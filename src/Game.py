@@ -31,10 +31,10 @@ class Game:
 
     def DefaultNameForPlayer(i):
         switcher = {
-            0: "A",
-            1: "B",
-            2: "C",
-            4: "D"
+            0: "1",
+            1: "2",
+            2: "3",
+            4: "4"
         }
         return switcher[i]
 
@@ -62,6 +62,7 @@ class Game:
     def start(self, roundCount = 1):
         roundNumberZeroFill = len(str(roundCount))
         for roundNumber in range(1, roundCount + 1):
+            self.board.initStoredValidActions()
             self.board.draw()
             print("ROUND #%s: " % str(roundNumber).zfill(roundNumberZeroFill), end="")
             playerCount = len(self.players)
@@ -78,18 +79,24 @@ class Game:
             while not finished:
                 player = self.players[currentPlayerIndex]
                 action = player.play(self.board)
-                path = Path.Dijkstra(self.board, player.pawn.coord, player.endPositions)
-                self.board.displayPath(path, player.color.value)
-                time.sleep(0.1)
-                self.board.hidePath(path)
-                print(path)
+                #path = Path.Dijkstra(self.board, player.pawn.coord, player.endPositions)
+                #self.board.displayPath(path, player.color.value)
+                #time.sleep(0.1)
+                #self.board.hidePath(path)
+                #print(path)
                 if isinstance(action, PawnMove):
+                    #self.board.displayValidPawnMoves(player)
+                    #time.sleep(0.5)
+                    #self.board.hideValidPawnMoves(player)
                     player.movePawn(action.toCoord)
                     if player.hasWon():
                         finished = True
                         print("Player %s won" % player.name)
                         player.score += 1
                 elif isinstance(action, FencePlacing):
+                    #self.board.displayValidFencePlacings(player)
+                    #time.sleep(0.5)
+                    #self.board.hideValidFencePlacings(player)
                     player.placeFence(action.coord, action.direction)
                 elif isinstance(action, Quit):
                     finished = True

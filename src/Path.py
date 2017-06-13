@@ -8,6 +8,7 @@
 
 import math
 
+from src.Settings        import *
 from src.action.PawnMove import *
 
 
@@ -44,6 +45,8 @@ class Path:
         return minManhattanDistance
 
     def BreadthFirstSearch(board, startCoord, endCoords):
+        global TRACE
+        TRACE["Path.BreadthFirstSearch"] += 1
         """Breadth-First-Search(Graph, root):
         
         create empty set S
@@ -77,7 +80,7 @@ class Path:
                     pathMoves.reverse()
                     return Path(pathMoves[1:])
             # Add neighbors
-            validMoves = board.validPawnMoves(move.toCoord)
+            validMoves = board.storedValidPawnMoves[move.toCoord]#board.validPawnMoves(move.toCoord)
             sorted(validMoves, key=lambda validMove: Path.ManhattanDistanceMulti(validMove.toCoord, endCoords))
             for validMove in validMoves: 
                 if validMove.toCoord not in previousMoves:
@@ -89,6 +92,8 @@ class Path:
         pass
 
     def Dijkstra(board, startCoord, endCoords, moveScore = lambda move, step: 1): # moveScore = function or lamdba (move) promotePathStartingWithJump, discriminatePathStartigByOfferingJump
+        global TRACE
+        TRACE["Path.Dijkstra"] += 1
         root = PawnMove(None, startCoord)
 
         previousMoves = {startCoord: (0, root)} # coord: (score, move)
@@ -105,7 +110,7 @@ class Path:
                     pathMoves.reverse()
                     return Path(pathMoves[1:])
             # Add neighbors
-            validMoves = board.validPawnMoves(move.toCoord)
+            validMoves = board.storedValidPawnMoves[move.toCoord]#board.validPawnMoves(move.toCoord)
             sorted(validMoves, key=lambda validMove: Path.ManhattanDistanceMulti(validMove.toCoord, endCoords))
             for validMove in validMoves: 
                 validMoveScore = score + moveScore(validMove, step + 1)

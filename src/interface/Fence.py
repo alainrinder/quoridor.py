@@ -40,6 +40,7 @@ class Fence(IDrawable):
         self.coord = coord
         self.direction = direction
         self.board.fences.append(self)
+        self.board.updateStoredValidActionsAfterFencePlacing(coord, direction)
         self.draw()
 
     def getSquare(self):

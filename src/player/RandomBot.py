@@ -16,10 +16,13 @@ from src.action.IAction import *
 class RandomBot(IBot):
     def play(self, board) -> IAction:
         # 1 chance over 3 to place a fence
-        validFencePlacings = board.validFencePlacings()
-        if random.randint(0, 2) == 0 and self.remainingFences() > 0 and len(validFencePlacings) > 0:
-            return random.choice(validFencePlacings)
+        #validFencePlacings = board.validFencePlacings()
+        if random.randint(0, 2) == 0 and self.remainingFences() > 0 and len(board.storedValidFencePlacings) > 0:
+            randomFencePlacing = random.choice(board.storedValidFencePlacings)
+            while board.isFencePlacingBlocking(randomFencePlacing):
+                randomFencePlacing = random.choice(board.storedValidFencePlacings)
+            return randomFencePlacing
         else:
-            validPawnMoves = board.validPawnMoves(self.pawn.coord)
+            validPawnMoves = board.storedValidPawnMoves[self.pawn.coord]#board.validPawnMoves(self.pawn.coord)
             return random.choice(validPawnMoves)
 

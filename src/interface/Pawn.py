@@ -17,6 +17,7 @@ class Pawn(IDrawable):
     def __init__(self, board, player):
         self.board  = board
         self.player = player
+        self.coord  = None
 
     def draw(self, fillColor = None, textColor = Color.WHITE.value):
         if not INTERFACE:
@@ -34,8 +35,10 @@ class Pawn(IDrawable):
         label.draw(self.board.window)
 
     def place(self, coord):
+        fromCoord, toCoord = None if self.coord is None else self.coord.clone(), coord
         self.coord = coord
         self.board.pawns.append(self)
+        self.board.updateStoredValidActionsAfterPawnMove(fromCoord, toCoord)
         self.draw()
 
     def move(self, coord):
