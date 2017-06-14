@@ -100,10 +100,12 @@ class Game:
                     player.placeFence(action.coord, action.direction)
                 elif isinstance(action, Quit):
                     finished = True
-                    print("Player %s quitted" % player.name)
+                    #print("Player %s quitted" % player.name)
                 currentPlayerIndex = (currentPlayerIndex + 1) % playerCount
                 if INTERFACE:
                 	time.sleep(TEMPO_SEC)
+                #else:
+                #    self.board.drawOnConsole()
             # DELETE OBJECTS (fences in board.fences, ...)
         print()
         print("FINAL SCORES: ")

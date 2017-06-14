@@ -44,7 +44,7 @@ class Path:
                 minManhattanDistance = manhattanDistance
         return minManhattanDistance
 
-    def BreadthFirstSearch(board, startCoord, endCoords):
+    def BreadthFirstSearch(board, startCoord, endCoords, ignorePawns = False):
         global TRACE
         TRACE["Path.BreadthFirstSearch"] += 1
         """Breadth-First-Search(Graph, root):
@@ -68,6 +68,7 @@ class Path:
 
         previousMoves = {startCoord: root}
         nextMoves = [root]
+        validPawnMoves = board.storedValidPawnMovesIgnoringPawns if ignorePawns else board.storedValidPawnMoves
         while nextMoves:
             move = nextMoves.pop(0) 
             for endCoord in endCoords:
@@ -80,7 +81,7 @@ class Path:
                     pathMoves.reverse()
                     return Path(pathMoves[1:])
             # Add neighbors
-            validMoves = board.storedValidPawnMoves[move.toCoord]#board.validPawnMoves(move.toCoord)
+            validMoves = validPawnMoves[move.toCoord] #board.validPawnMoves(move.toCoord)
             sorted(validMoves, key=lambda validMove: Path.ManhattanDistanceMulti(validMove.toCoord, endCoords))
             for validMove in validMoves: 
                 if validMove.toCoord not in previousMoves:
@@ -91,13 +92,14 @@ class Path:
     def DepthFirstSearch():
         pass
 
-    def Dijkstra(board, startCoord, endCoords, moveScore = lambda move, step: 1): # moveScore = function or lamdba (move) promotePathStartingWithJump, discriminatePathStartigByOfferingJump
+    def Dijkstra(board, startCoord, endCoords, moveScore = lambda move, step: 1, ignorePawns = False): # moveScore = function or lamdba (move) promotePathStartingWithJump, discriminatePathStartigByOfferingJump
         global TRACE
         TRACE["Path.Dijkstra"] += 1
         root = PawnMove(None, startCoord)
 
         previousMoves = {startCoord: (0, root)} # coord: (score, move)
         nextMoves = [(0, 0, root)] # (step, score, move)
+        validPawnMoves = board.storedValidPawnMovesIgnoringPawns if ignorePawns else board.storedValidPawnMoves
         while nextMoves:
             sorted(nextMoves, key=lambda nextMove: nextMove[1]) # Order by score
             (step, score, move) = nextMoves.pop(0) # Get first (minimal score)
@@ -110,7 +112,7 @@ class Path:
                     pathMoves.reverse()
                     return Path(pathMoves[1:])
             # Add neighbors
-            validMoves = board.storedValidPawnMoves[move.toCoord]#board.validPawnMoves(move.toCoord)
+            validMoves = validPawnMoves[move.toCoord] #board.validPawnMoves(move.toCoord)
             sorted(validMoves, key=lambda validMove: Path.ManhattanDistanceMulti(validMove.toCoord, endCoords))
             for validMove in validMoves: 
                 validMoveScore = score + moveScore(validMove, step + 1)

@@ -19,10 +19,16 @@ class RandomBot(IBot):
         #validFencePlacings = board.validFencePlacings()
         if random.randint(0, 2) == 0 and self.remainingFences() > 0 and len(board.storedValidFencePlacings) > 0:
             randomFencePlacing = random.choice(board.storedValidFencePlacings)
-            while board.isFencePlacingBlocking(randomFencePlacing):
+            attempts = 5
+            while board.isFencePlacingBlocking(randomFencePlacing) and attempts > 0:
+                #print("Cannot place blocking %s" % randomFencePlacing)
                 randomFencePlacing = random.choice(board.storedValidFencePlacings)
+                attempts -= 1
+            if (attempts == 0):
+                validPawnMoves = board.storedValidPawnMoves[self.pawn.coord]
+                return random.choice(validPawnMoves)
             return randomFencePlacing
         else:
-            validPawnMoves = board.storedValidPawnMoves[self.pawn.coord]#board.validPawnMoves(self.pawn.coord)
+            validPawnMoves = board.storedValidPawnMoves[self.pawn.coord] #board.validPawnMoves(self.pawn.coord)
             return random.choice(validPawnMoves)
 
