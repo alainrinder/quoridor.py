@@ -29,6 +29,10 @@ from src.player.BuilderBot import *
 
 
 def main():
+    """
+    Main function of quoridor. 
+    Create a game instance and launch game rounds.
+    """
     game = Game([ # 2 or 4
         RunnerBot("Alain"),
         BuilderBot("Benoit"),

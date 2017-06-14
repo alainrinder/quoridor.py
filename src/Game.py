@@ -20,94 +20,96 @@ from src.Path                import *
 
 
 class Game:
-    def DefaultColorForPlayer(i):
-        switcher = {
-            0: Color.RED,
-            1: Color.BLUE,
-            2: Color.GREEN,
-            3: Color.ORANGE
-        }
-        return switcher[i]
+    """
+    Define players and game parameters, and manage game rounds.
+    """
 
-    def DefaultNameForPlayer(i):
-        switcher = {
-            0: "1",
-            1: "2",
-            2: "3",
-            4: "4"
-        }
-        return switcher[i]
+    DefaultColorForPlayer = [
+        Color.RED,
+        Color.BLUE,
+        Color.GREEN,
+        Color.ORANGE
+    ]
+
+    DefaultNameForPlayer = [
+        "1",
+        "2",
+        "3",
+        "4"
+    ]
 
     def __init__(self, players, cols = 9, rows = 9, totalFenceCount = 20, squareSize = 32, innerSize = None):
         if innerSize is None:
             innerSize = int(squareSize/8)
         self.totalFenceCount = totalFenceCount
+        # Create board instance
         board = Board(self, cols, rows, squareSize, innerSize)
+        # Support only 2 or 4 players
         playerCount = min(int(len(players)/2)*2, 4)
         self.players = []
+        # For each player
         for i in range(playerCount):
-            if INTERFACE and isinstance(players[i], Human):
+            if not INTERFACE and isinstance(players[i], Human):
                 raise Exception("Cannot launch a blind game with human players")
+            # Define player name and color
             if players[i].name is None:
-                players[i].name = Game.DefaultNameForPlayer(i)
+                players[i].name = Game.DefaultNameForPlayer[i]
             if players[i].color is None:
-                players[i].color = Game.DefaultColorForPlayer(i)
+                players[i].color = Game.DefaultColorForPlayer[i]
+            # Initinialize player pawn
             players[i].pawn = Pawn(board, players[i])
+            # Define player start positions and targets
             players[i].startPosition = board.startPosition(i)
             players[i].endPositions = board.endPositions(i)
             self.players.append(players[i])
-            #board.addPawn(pawns[i])
         self.board = board
 
     def start(self, roundCount = 1):
+        """
+        Launch a series of rounds; for each round, ask successively each player to play. 
+        """
         roundNumberZeroFill = len(str(roundCount))
+        # For each round
         for roundNumber in range(1, roundCount + 1):
+            # Reset board stored valid pawn moves & fence placings, and redraw empty grid
             self.board.initStoredValidActions()
             self.board.draw()
             print("ROUND #%s: " % str(roundNumber).zfill(roundNumberZeroFill), end="")
             playerCount = len(self.players)
+            # Share fences between players
             playerFenceCount = int(self.totalFenceCount/playerCount)
             self.board.fences, self.board.pawns = [], []
+            # For each player
             for i in range(playerCount):
                 player = self.players[i]
+                # Place player pawn at start position and add fences to player stock
                 player.pawn.place(player.startPosition)
                 for j in range(playerFenceCount):
                     player.fences.append(Fence(self.board, player))
-            
-            currentPlayerIndex = random.randrange(playerCount) # COIN TOSS
+            # Define randomly first player (coin toss)
+            currentPlayerIndex = random.randrange(playerCount) 
             finished = False
             while not finished:
                 player = self.players[currentPlayerIndex]
+                # The player chooses its action (manually for human players or automatically for bots)
                 action = player.play(self.board)
-                #path = Path.Dijkstra(self.board, player.pawn.coord, player.endPositions)
-                #self.board.displayPath(path, player.color.value)
-                #time.sleep(0.1)
-                #self.board.hidePath(path)
-                #print(path)
                 if isinstance(action, PawnMove):
-                    #self.board.displayValidPawnMoves(player)
-                    #time.sleep(0.5)
-                    #self.board.hideValidPawnMoves(player)
                     player.movePawn(action.toCoord)
+                    # Check if the pawn has reach one of the player targets
                     if player.hasWon():
                         finished = True
                         print("Player %s won" % player.name)
                         player.score += 1
                 elif isinstance(action, FencePlacing):
-                    #self.board.displayValidFencePlacings(player)
-                    #time.sleep(0.5)
-                    #self.board.hideValidFencePlacings(player)
                     player.placeFence(action.coord, action.direction)
                 elif isinstance(action, Quit):
                     finished = True
-                    #print("Player %s quitted" % player.name)
+                    print("Player %s quitted" % player.name)
                 currentPlayerIndex = (currentPlayerIndex + 1) % playerCount
                 if INTERFACE:
                 	time.sleep(TEMPO_SEC)
-                #else:
-                #    self.board.drawOnConsole()
-            # DELETE OBJECTS (fences in board.fences, ...)
         print()
+        # Display final scores
         print("FINAL SCORES: ")
         bestPlayer = self.players[0]
         for player in self.players:
@@ -117,6 +119,9 @@ class Game:
         print("Player %s won with %d victories!" % (bestPlayer.name, bestPlayer.score))
 
     def end(self):
+        """
+        Called at the end in order to close the window.
+        """
         if INTERFACE:
             self.board.window.close()
 
