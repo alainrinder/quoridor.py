@@ -16,6 +16,9 @@ class PawnMove(IAction):
         self.toCoord      = toCoord
         self.throughCoord = throughCoord
 
+    def isJump(self):
+    	return (self.throughCoord is not None)
+
     # https://stackoverflow.com/questions/390250/elegant-ways-to-support-equivalence-equality-in-python-classes
     def __eq__(self, other):
         """Override the default Equals behavior"""
