@@ -34,11 +34,11 @@ def main():
     Create a game instance and launch game rounds.
     """
     game = Game([ # 2 or 4
-        RunnerBot("Alain"),
-        BuilderBot("Benoit"),
-        BuilderBot("Clément"),
-        BuilderBot("Daniel")
-    ], totalFenceCount = 40)
+        Human("Alain"),
+        #BuilderBot("Benoit"),
+        #BuilderBot("Clément"),
+        Human("Pierre")
+    ], totalFenceCount = 40, cols = 9, rows = 9)
     game.start(10) # rounds
     game.end()
 

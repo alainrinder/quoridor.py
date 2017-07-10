@@ -340,7 +340,7 @@ class Board(IDrawable):
 
     def getPawnMoveFromMousePosition(self, pawn, x, y) -> PawnMove:
         square = self.getSquareFromMousePosition(x, y)
-        if square is None or not self.isValidPawnMove(pawn, square.coord):
+        if square is None or not self.isValidPawnMove(pawn.coord, square.coord):
             return None
         return PawnMove(pawn, square.coord)
 

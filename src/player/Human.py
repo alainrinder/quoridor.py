@@ -29,11 +29,11 @@ class Human(IPlayer):
                     return pawnMove
             if key == "f" and self.remainingFences() > 0: # fence
                 validFencePlacings = board.storedValidFencePlacings #board.validFencePlacings()
-                board.displayValidFencePlacings(self, validFencePlacings)
+                #board.displayValidFencePlacings(self, validFencePlacings)
                 click = board.window.getMouse()
                 fencePlacing = board.getFencePlacingFromMousePosition(click.x, click.y)
                 clickOnValidTarget = (fencePlacing is not None)
-                board.hideValidFencePlacings(self, validFencePlacings)
+                #board.hideValidFencePlacings(self, validFencePlacings)
                 if clickOnValidTarget:
                     return fencePlacing
             if key == "Escape":

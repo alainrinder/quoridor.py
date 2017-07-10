@@ -21,31 +21,31 @@ class GridCoordinates:
         """
         Return the coordinates of the square at left, even if it does not exists
         """
-    	return GridCoordinates(self.col - 1, self.row)
+        return GridCoordinates(self.col - 1, self.row)
 
     def right(self):
         """
         Return the coordinates of the square at right, even if it does not exists
         """
-    	return GridCoordinates(self.col + 1, self.row)
+        return GridCoordinates(self.col + 1, self.row)
 
     def top(self):
         """
         Return the coordinates of the square at top, even if it does not exists
         """
-    	return GridCoordinates(self.col, self.row - 1)
+        return GridCoordinates(self.col, self.row - 1)
 
     def bottom(self):
         """
         Return the coordinates of the square at bottom, even if it does not exists
         """
-    	return GridCoordinates(self.col, self.row + 1)
+        return GridCoordinates(self.col, self.row + 1)
 
     def clone(self):
         """
         Return identical coordinates 
         """
-    	return GridCoordinates(self.col, self.row)
+        return GridCoordinates(self.col, self.row)
 
     def __eq__(self, other):
         """
@@ -74,6 +74,6 @@ class GridCoordinates:
         return hash((self.col, self.row))
 
     def __str__(self):
-    	return "%d,%d" % (self.col, self.row)
+        return "%d,%d" % (self.col, self.row)
 
 

@@ -109,6 +109,7 @@ class Game:
                 if INTERFACE:
                 	time.sleep(TEMPO_SEC)
         print()
+        #self.board.drawOnConsole()
         # Display final scores
         print("FINAL SCORES: ")
         bestPlayer = self.players[0]
