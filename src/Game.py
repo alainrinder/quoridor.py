@@ -1,6 +1,6 @@
 #
 # Game.py
-# 
+#
 # @author    Alain Rinder
 # @date      2017.06.02
 # @version   0.1
@@ -66,7 +66,7 @@ class Game:
 
     def start(self, roundCount = 1):
         """
-        Launch a series of rounds; for each round, ask successively each player to play. 
+        Launch a series of rounds; for each round, ask successively each player to play.
         """
         roundNumberZeroFill = len(str(roundCount))
         # For each round
@@ -87,7 +87,7 @@ class Game:
                 for j in range(playerFenceCount):
                     player.fences.append(Fence(self.board, player))
             # Define randomly first player (coin toss)
-            currentPlayerIndex = random.randrange(playerCount) 
+            currentPlayerIndex = random.randrange(playerCount)
             finished = False
             while not finished:
                 player = self.players[currentPlayerIndex]
@@ -115,7 +115,7 @@ class Game:
         bestPlayer = self.players[0]
         for player in self.players:
             print("- %s: %d" % (str(player), player.score))
-            if player.score > bestPlayer.score: 
+            if player.score > bestPlayer.score:
             	bestPlayer = player
         print("Player %s won with %d victories!" % (bestPlayer.name, bestPlayer.score))
 
@@ -125,4 +125,3 @@ class Game:
         """
         if INTERFACE:
             self.board.window.close()
-
