@@ -14,10 +14,12 @@
 # OK Handle exec params
 # OK Check if fence placing will not block a player
 # OK Create algorithms for path finding
-#    BuilderBot: maximise other pawns path
+# OK BuilderBot: maximise other pawns path
 # OK PERFORMANCE ISSUES: store valid fence placings, valid pawn moves with updates
 # OK Check blocking fence using path without pawns (one path could exist but cannot be currently accessible because of a pawn) (DFS)
 # OK Blocking fence checking failed on testing path with the future fence -> update valid pawn moves when appending fence in method isFencePlacingBlocking
+#    Create a bot combining BuilderBot & RunnerBot (run if path is shorter)
+#    Fix path bug (sometimes consider a player as blocked, but paths still exist)
 
 import getopt
 
@@ -56,7 +58,7 @@ def readArguments():
             for playerData in arg.split(","):
                 playerName, playerType = playerData.split(":")
                 if playerType not in globals():
-                    print("Unknown player type " + playerType + ". Abort.")
+                    print("Unknown player type %s . Abort." % (playerType))
                     sys.exit(PARAMETERS_ERROR_RETURN_CODE)
                 players.append(globals()[playerType](playerName))
             if len(players) not in (2, 4):

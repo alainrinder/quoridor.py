@@ -1,6 +1,6 @@
 #
 # GridCoordinates.py
-# 
+#
 # @author    Alain Rinder
 # @date      2017.06.02
 # @version   0.1
@@ -26,7 +26,7 @@ class Board(IDrawable):
         self.game = game
         self.cols,       self.rows      = cols,       rows
         self.squareSize, self.innerSize = squareSize, innerSize
-        self.grid = [[Square(self, GridCoordinates(col, row)) for row in range(rows)] for col in range(cols)] 
+        self.grid = [[Square(self, GridCoordinates(col, row)) for row in range(rows)] for col in range(cols)]
         self.width, self.height = squareSize*cols + innerSize*(cols - 1), squareSize*rows + innerSize*(rows - 1)
         if INTERFACE:
             self.window = GraphWin("Quoridor", self.width, self.height)
@@ -89,7 +89,7 @@ class Board(IDrawable):
 
     def draw(self):
         if not INTERFACE:
-            return 
+            return
         background = Rectangle(Point(0, 0), Point(self.width, self.height))
         background.setFill(Color.WHITE.value)
         background.setWidth(0)
@@ -111,10 +111,10 @@ class Board(IDrawable):
 
     def endPositions(self, playerIndex):
         colSwitcher = {
-            0: None, 
-            1: None, 
-            2: self.lastCol, 
-            3: self.firstCol 
+            0: None,
+            1: None,
+            2: self.lastCol,
+            3: self.firstCol
         }
         rowSwitcher = {
             0: self.lastRow,
@@ -255,7 +255,7 @@ class Board(IDrawable):
     def hideValidPawnMoves(self, player, validMoves = None):
         if not INTERFACE:
             return
-        if validMoves is None: 
+        if validMoves is None:
             validMoves = self.storedValidPawnMoves[player.pawn.coord] #self.validPawnMoves(player.pawn.coord)
         for validMove in validMoves:
             possiblePawn = Pawn(self, player)
@@ -323,7 +323,7 @@ class Board(IDrawable):
     def hideValidFencePlacings(self, player, validPlacings = None):
         if not INTERFACE:
             return
-        if validPlacings is None: 
+        if validPlacings is None:
             validPlacings = self.storedValidFencePlacings#self.validFencePlacings()
         for validPlacing in validPlacings:
             possibleFence = Fence(self, player)
@@ -489,3 +489,27 @@ class Board(IDrawable):
         # bottom edge
         print("'" + "-+"*(self.cols - 1) + "-'")
 
+    def getFencePlacingImpactOnPaths(self, fencePlacing):
+        global TRACE
+        TRACE["Board.getFencePlacingImpactOnPaths"] += 1
+        stateBefore = {}
+        for player in self.game.players:
+            path = Path.BreadthFirstSearch(self, player.pawn.coord, player.endPositions, ignorePawns = True)
+            if path is None:
+                print("Player %s is already blocked!" % (player.name))
+                return None
+            stateBefore[player.name] = len(path.moves)
+        fence = Fence(self, None)
+        fence.coord, fence.direction = fencePlacing.coord, fencePlacing.direction
+        self.fences.append(fence)
+        self.updateStoredValidPawnMovesIgnoringPawnsAfterFencePlacing(fencePlacing.coord, fencePlacing.direction)
+        impact = {}
+        for player in self.game.players:
+            path = Path.BreadthFirstSearch(self, player.pawn.coord, player.endPositions, ignorePawns = True)
+            if path is None:
+                print("Fence placing will block player %s" % (player.name))
+                return None
+            impact[player.name] = len(path.moves) - stateBefore[player.name]
+        self.fences.pop()
+        self.updateStoredValidPawnMovesIgnoringPawnsAfterFencePlacing(fencePlacing.coord, fencePlacing.direction)
+        return impact

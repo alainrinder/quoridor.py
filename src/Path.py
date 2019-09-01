@@ -1,6 +1,6 @@
 #
 # GridCoordinates.py
-# 
+#
 # @author    Alain Rinder
 # @date      2017.06.02
 # @version   0.1
@@ -15,7 +15,7 @@ from src.action.PawnMove import *
 
 class Path:
     """
-    Find path for pawn 
+    Find path for pawn
     """
 
     def __init__(self, moves):
@@ -71,12 +71,12 @@ class Path:
         Set ignorePawns to True to find path as if there were no pawns at all (used to check if placing a fence will block a player)
 
         Algorithm:
-        
+
         create empty set S
-        create empty queue Q      
+        create empty queue Q
 
         add root to S
-        Q.enqueue(root)                      
+        Q.enqueue(root)
 
         while Q is not empty:
             current = Q.dequeue()
@@ -97,7 +97,7 @@ class Path:
         validPawnMoves = board.storedValidPawnMovesIgnoringPawns if ignorePawns else board.storedValidPawnMoves
         # While nodes remain to be visited
         while nextMoves:
-            move = nextMoves.pop(0) 
+            move = nextMoves.pop(0)
             for endCoord in endCoords:
                 # If one of the targets is reached (shortest path)
                 if move.toCoord == endCoord:
@@ -109,10 +109,10 @@ class Path:
                     pathMoves.reverse()
                     return Path(pathMoves[1:])
             # Add neighbors as nodes to visit
-            validMoves = validPawnMoves[move.toCoord] 
+            validMoves = validPawnMoves[move.toCoord]
             # Sort neighbors to promote neighbors near targets
             sorted(validMoves, key=lambda validMove: Path.ManhattanDistanceMulti(validMove.toCoord, endCoords))
-            for validMove in validMoves: 
+            for validMove in validMoves:
                 if validMove.toCoord not in previousMoves:
                     previousMoves[validMove.toCoord] = validMove
                     nextMoves.append(validMove)
@@ -124,7 +124,7 @@ class Path:
         """
         pass
 
-    def Dijkstra(board, startCoord, endCoords, moveScore = lambda move, step: 1, ignorePawns = False): 
+    def Dijkstra(board, startCoord, endCoords, moveScore = lambda move, step: 1, ignorePawns = False):
         """
         Path finding using Dijkstra algorithm.
         moveScore is a function used to define move distance: for instance, promoting path starting with a jump
@@ -144,7 +144,7 @@ class Path:
             (step, score, move) = nextMoves.pop(0) # Get first (minimal score)
             for endCoord in endCoords:
                 # If one of the targets is reached (shortest path)
-                if move.toCoord == endCoord: 
+                if move.toCoord == endCoord:
                     # Build backward path, then reverse it
                     pathMoves = [move]
                     while move.fromCoord is not None:
@@ -153,10 +153,10 @@ class Path:
                     pathMoves.reverse()
                     return Path(pathMoves[1:])
             # Add neighbors as nodes to visit
-            validMoves = validPawnMoves[move.toCoord] 
+            validMoves = validPawnMoves[move.toCoord]
             # Sort neighbors to promote neighbors near targets
             sorted(validMoves, key=lambda validMove: Path.ManhattanDistanceMulti(validMove.toCoord, endCoords))
-            for validMove in validMoves: 
+            for validMove in validMoves:
                 validMoveScore = score + moveScore(validMove, step + 1)
                 if validMove.toCoord not in previousMoves:
                     previousMoves[validMove.toCoord] = (validMoveScore, validMove)
@@ -170,4 +170,3 @@ class Path:
         Path finding using A* algorithm
         """
         pass
-

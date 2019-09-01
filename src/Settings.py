@@ -1,6 +1,6 @@
 #
 # Settings.py
-# 
+#
 # @author    Alain Rinder
 # @date      2017.06.02
 # @version   0.1
@@ -18,7 +18,7 @@ TRACE = {
     "Board.validPawnMoves": 0,
     "Board.isValidPawnMove": 0,
     "Board.isFencePlacingBlocking": 0,
+    "Board.getFencePlacingImpactOnPaths": 0,
     "Board.updateStoredValidActionsAfterPawnMove": 0,
     "Board.updateStoredValidActionsAfterFencePlacing": 0
 }
-
