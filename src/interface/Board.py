@@ -497,6 +497,8 @@ class Board(IDrawable):
             path = Path.BreadthFirstSearch(self, player.pawn.coord, player.endPositions, ignorePawns = True)
             if path is None:
                 print("Player %s is already blocked!" % (player.name))
+                #for fence in self.fences:
+                #    print(fence)
                 return None
             stateBefore[player.name] = len(path.moves)
         fence = Fence(self, None)
@@ -507,7 +509,8 @@ class Board(IDrawable):
         for player in self.game.players:
             path = Path.BreadthFirstSearch(self, player.pawn.coord, player.endPositions, ignorePawns = True)
             if path is None:
-                print("Fence placing will block player %s" % (player.name))
+                #print("Fence placing will block player %s" % (player.name))
+                self.fences.pop()
                 return None
             impact[player.name] = len(path.moves) - stateBefore[player.name]
         self.fences.pop()

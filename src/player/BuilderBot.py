@@ -21,7 +21,7 @@ class BuilderBot(IBot):
             for fencePlacing in board.storedValidFencePlacings:
                 print(fencePlacing)
                 impact = board.getFencePlacingImpactOnPaths(fencePlacing)
-                if not impact:
+                if impact is None:
                     continue
                 globalImpact = 0
                 for playerName in impact:
@@ -29,12 +29,12 @@ class BuilderBot(IBot):
                 print(globalImpact)
                 fencePlacingImpacts[fencePlacing] = globalImpact
             if len(fencePlacingImpacts) == 0:
-                print ("No valid fence placing!")
+                #print ("No valid fence placing!")
                 validPawnMoves = board.storedValidPawnMoves[self.pawn.coord]
                 return random.choice(validPawnMoves)
             bestFencePlacing = max(fencePlacingImpacts, key = fencePlacingImpacts.get)
-            if fencePlacingImpacts[maximiseFencePlacing] == 0:
-                print ("No positive impact when placing fence")
+            if fencePlacingImpacts[bestFencePlacing] == 0:
+                #print ("No positive impact when placing fence")
                 validPawnMoves = board.storedValidPawnMoves[self.pawn.coord]
                 return random.choice(validPawnMoves)
             return bestFencePlacing
