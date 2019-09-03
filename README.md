@@ -9,6 +9,7 @@ With this script, you can:
 * Play against a bot (Human vs AI)
 * Make one bot to play against another (AI vs AI)
 
+For a quick play against IA, execute "python main.py --players=Me:Human,IA:BuildAndRunBot"
 Execute "python main.py -h" to display usage.
 
 For human players :
