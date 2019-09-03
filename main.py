@@ -23,12 +23,13 @@
 
 import getopt
 
-from src.Settings          import *
-from src.Game              import *
-from src.player.Human      import *
-from src.player.RandomBot  import *
-from src.player.RunnerBot  import *
-from src.player.BuilderBot import *
+from src.Settings              import *
+from src.Game                  import *
+from src.player.Human          import *
+from src.player.RandomBot      import *
+from src.player.RunnerBot      import *
+from src.player.BuilderBot     import *
+from src.player.BuildAndRunBot import *
 
 
 PARAMETERS_ERROR_RETURN_CODE = 1

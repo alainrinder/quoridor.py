@@ -18,6 +18,7 @@ from src.interface.Fence     import *
 from src.action.PawnMove     import *
 from src.action.FencePlacing import *
 from src.Path                import *
+from src.exception.PlayerPathObstructedException import *
 
 
 
@@ -489,7 +490,7 @@ class Board(IDrawable):
         # bottom edge
         print("'" + "-+"*(self.cols - 1) + "-'")
 
-    def getFencePlacingImpactOnPaths(self, fencePlacing):
+    def getFencePlacingImpactOnPaths(self, fencePlacing: FencePlacing):
         global TRACE
         TRACE["Board.getFencePlacingImpactOnPaths"] += 1
         stateBefore = {}
@@ -497,8 +498,6 @@ class Board(IDrawable):
             path = Path.BreadthFirstSearch(self, player.pawn.coord, player.endPositions, ignorePawns = True)
             if path is None:
                 print("Player %s is already blocked!" % (player.name))
-                #for fence in self.fences:
-                #    print(fence)
                 return None
             stateBefore[player.name] = len(path.moves)
         fence = Fence(self, None)
@@ -511,7 +510,8 @@ class Board(IDrawable):
             if path is None:
                 #print("Fence placing will block player %s" % (player.name))
                 self.fences.pop()
-                return None
+                self.updateStoredValidPawnMovesIgnoringPawnsAfterFencePlacing(fencePlacing.coord, fencePlacing.direction)
+                raise PlayerPathObstructedException(player, fencePlacing)
             impact[player.name] = len(path.moves) - stateBefore[player.name]
         self.fences.pop()
         self.updateStoredValidPawnMovesIgnoringPawnsAfterFencePlacing(fencePlacing.coord, fencePlacing.direction)

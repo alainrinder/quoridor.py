@@ -107,7 +107,7 @@ class Game:
                     print("Player %s quitted" % player.name)
                 currentPlayerIndex = (currentPlayerIndex + 1) % playerCount
                 if INTERFACE:
-                	time.sleep(TEMPO_SEC)
+                    time.sleep(TEMPO_SEC)
         print()
         #self.board.drawOnConsole()
         # Display final scores
