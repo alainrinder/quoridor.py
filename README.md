@@ -9,8 +9,8 @@ With this script, you can:
 * Play against a bot (Human vs AI)
 * Make one bot to play against another (AI vs AI)
 
-For a quick play against IA, execute "python main.py --players=Me:Human,IA:BuildAndRunBot"
-Execute "python main.py -h" to display usage.
+For a quick play against IA, execute "python main.py --players=Me:Human,IA:BuildAndRunBot". 
+Otherwise, execute "python main.py -h" to display usage.
 
 For human players :
 * Press "p" to move your pawn: it will display the possible moves, so you can click where you want your pawn to go;
