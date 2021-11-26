@@ -35,8 +35,8 @@ from src.player.BuildAndRunBot import *
 PARAMETERS_ERROR_RETURN_CODE = 1
 
 def printUsage():
-    print("Usage: python quoridor.py [{-h|--help}] {-p|--players=}<PlayerName:PlayerType,...> [{-r|--rounds=}<roundCount>] [{-x|--cols=}<ColCount>] [{-y|--rows=}<RowCount>] [{-f|--fences=}<TotalFenceCount>] [{s|--square_size=}<SquareSizeInPixels>]")
-    print("Example: python quoridor.py --players=Alain:Human,Benoit:BuilderBot,Caroline:RandomBot,Daniel:RunnerBot --square-size=32")
+    print("Usage: python main.py [{-h|--help}] {-p|--players=}<PlayerName:PlayerType,...> [{-r|--rounds=}<roundCount>] [{-x|--cols=}<ColCount>] [{-y|--rows=}<RowCount>] [{-f|--fences=}<TotalFenceCount>] [{-s|--square_size=}<SquareSizeInPixels>]")
+    print("Example: python main.py --players=Alain:Human,Benoit:BuilderBot,Caroline:RandomBot,Daniel:RunnerBot --square_size=32")
 
 def readArguments():
     try:
